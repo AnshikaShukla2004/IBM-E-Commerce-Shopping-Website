@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Fashion for Everyone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffeef8 0%, #f0f9ff 50%, #fef7cd 100%);
+            min-height: 100vh;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #fbb6ce 0%, #f9a8d4 50%, #ddd6fe 100%);
+        }
+        
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, #ffffff 0%, #fef7ff 100%);
+            border: 2px solid #fce7f3;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px) rotate(1deg);
+            box-shadow: 0 25px 50px rgba(244, 114, 182, 0.15);
+            border-color: #f472b6;
+        }
+        
+        .heart-icon {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #fce7f3, #ffffff);
+        }
+        
+        .heart-icon.liked {
+            color: #ec4899;
+            transform: scale(1.3);
+            background: linear-gradient(135deg, #fce7f3, #fdf2f8);
+        }
+        
+        .modal {
+            backdrop-filter: blur(15px);
+        }
+        
+        .star-rating {
+            color: #fbbf24;
+        }
+        
+        .category-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, #ffffff 0%, #fef7ff 100%);
+            border: 2px solid #e0e7ff;
+        }
+        
+        .category-card:hover {
+            transform: scale(1.08) rotate(-2deg);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+            border-color: #c4b5fd;
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 20%;
+            right: 5%;
+            z-index: 30;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .floating-stars {
+            position: fixed;
+            top: 60%;
+            left: 5%;
+            z-index: 30;
+            animation: float 4s ease-in-out infinite reverse;
+        }
+        
+        .floating-sparkles {
+            position: fixed;
+            bottom: 20%;
+            right: 8%;
+            z-index: 30;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+        }
+        
+        .cute-button {
+            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+            border: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3);
+        }
+        
+        .cute-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 114, 182, 0.4);
+        }
+        
+        .pastel-card {
+            background: linear-gradient(145deg, #ffffff 0%, #fef7ff 100%);
+            border: 2px solid #fce7f3;
+            border-radius: 20px;
+        }
+        
+        .brand-badge {
+            background: linear-gradient(135deg, #ddd6fe 0%, #e0e7ff 100%);
+            border: 1px solid #c4b5fd;
+            border-radius: 15px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #7c3aed;
+        }
+        
+        .welcome-overlay {
+            background: linear-gradient(135deg, rgba(251, 182, 206, 0.95) 0%, rgba(249, 168, 212, 0.95) 50%, rgba(221, 214, 254, 0.95) 100%);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="welcome-screen" class="fixed inset-0 welcome-overlay flex items-center justify-center z-50">
+        <div class="pastel-card p-12 max-w-md w-full mx-4 text-center">
+            <div class="text-6xl mb-6">🌸✨</div>
+            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+                Welcome to StyleHub! 💕
+            </h1>
+            <p class="text-gray-600 mb-8 text-lg">Your magical fashion destination awaits! ✨</p>
+            
+            <div class="space-y-4">
+                <button onclick="showLogin(); hideWelcome();" class="w-full cute-button text-white py-3 px-6 font-semibold text-lg">
+                    Login 🦄
+                </button>
+                <button onclick="showSignup(); hideWelcome();" class="w-full bg-gradient-to-r from-purple-400 to-indigo-400 text-white py-3 px-6 rounded-full font-semibold text-lg hover:from-purple-500 hover:to-indigo-500 transition-all">
+                    Create Account 🌟
+                </button>
+                <button onclick="hideWelcome();" class="w-full text-gray-600 py-2 hover:text-gray-800 transition-colors">
+                    Browse as Guest 👀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-hearts">
+        <div class="text-4xl">💖</div>
+    </div>
+    <div class="floating-stars">
+        <div class="text-3xl">⭐</div>
+    </div>
+    <div class="floating-sparkles">
+        <div class="text-2xl">✨</div>
+    </div>
+
+    <nav class="pastel-card shadow-lg sticky top-0 z-40 mx-4 mt-4 rounded-2xl">
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <h1 class="text-3xl font-bold gradient-bg bg-clip-text text-transparent">StyleHub 🌸</h1>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-700 hover:text-pink-500 font-medium transition-colors">Home 🏠</a>
+                    <div class="relative group">
+                        <button class="text-gray-700 hover:text-pink-500 font-medium flex items-center transition-colors">
+                            Categories 🛍️ <i class="fas fa-chevron-down ml-1"></i>
+                        </button>
+                        <div class="absolute top-full left-0 pastel-card shadow-lg p-4 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">👔 Men's Fashion</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">👗 Women's Fashion</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">👶 Kids' Fashion</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">👟 Footwear</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">💍 Accessories</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">👜 Handbags</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">💄 Makeup</a>
+                                <a href="#" class="block p-3 hover:bg-pink-50 rounded-lg transition-colors">🧴 Skincare</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search magical items... ✨" class="pl-12 pr-4 py-3 border-2 border-pink-200 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300 bg-pink-50">
+                        <i class="fas fa-search absolute left-4 top-4 text-pink-400"></i>
+                    </div>
+                    
+                    <button onclick="toggleWishlist()" class="relative p-3 text-pink-500 hover:text-pink-600 bg-pink-50 rounded-full transition-all hover:scale-110">
+                        <i class="fas fa-heart text-xl"></i>
+                        <span id="wishlist-count" class="absolute -top-2 -right-2 bg-gradient-to-r from-pink-400 to-red-400 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">0</span>
+                    </button>
+                    
+                    <button onclick="toggleCart()" class="relative p-3 text-purple-500 hover:text-purple-600 bg-purple-50 rounded-full transition-all hover:scale-110">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-gradient-to-r from-purple-400 to-indigo-400 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">0</span>
+                    </button>
+                    
+                    <div id="user-menu" class="hidden">
+                        <button onclick="logout()" class="bg-gradient-to-r from-red-400 to-pink-400 text-white px-6 py-3 rounded-full hover:from-red-500 hover:to-pink-500 transition-all font-semibold">
+                            Logout 👋
+                        </button>
+                    </div>
+                    
+                    <div id="auth-buttons">
+                        <button onclick="showLogin()" class="cute-button text-white px-6 py-3 font-semibold mr-2">
+                            Login 🦄
+                        </button>
+                        <button onclick="showSignup()" class="border-2 border-purple-300 text-purple-600 px-6 py-3 rounded-full hover:bg-purple-50 transition-all font-semibold">
+                            Sign Up 🌟
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="gradient-bg text-white py-24 mx-4 mt-8 rounded-3xl relative overflow-hidden">
+        <div class="absolute top-10 left-10 text-4xl animate-bounce">🦋</div>
+        <div class="absolute top-20 right-20 text-3xl animate-pulse">🌟</div>
+        <div class="absolute bottom-10 left-20 text-2xl animate-bounce">💫</div>
+        <div class="absolute bottom-20 right-10 text-3xl animate-pulse">🌸</div>
+        
+        <div class="max-w-7xl mx-auto px-8 text-center relative z-10">
+            <h2 class="text-6xl font-bold mb-8">Fashion That Speaks You 💖</h2>
+            <p class="text-2xl mb-10 opacity-90">Discover magical trends in clothing, accessories, and beauty ✨</p>
+            <button class="bg-white text-pink-600 px-12 py-4 rounded-full font-bold text-xl hover:bg-pink-50 transition-all transform hover:scale-105 shadow-lg">
+                Shop Now 🛍️
+            </button>
+        </div>
+    </section>
+
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <h3 class="text-3xl font-bold text-center mb-12">Shop by Category</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('men')">
+                    <div class="text-4xl mb-4">👔</div>
+                    <h4 class="font-semibold">Men's Fashion</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('women')">
+                    <div class="text-4xl mb-4">👗</div>
+                    <h4 class="font-semibold">Women's Fashion</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('kids')">
+                    <div class="text-4xl mb-4">👶</div>
+                    <h4 class="font-semibold">Kids' Fashion</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('accessories')">
+                    <div class="text-4xl mb-4">👜</div>
+                    <h4 class="font-semibold">Accessories</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('footwear')">
+                    <div class="text-4xl mb-4">👟</div>
+                    <h4 class="font-semibold">Footwear</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('handbags')">
+                    <div class="text-4xl mb-4">👛</div>
+                    <h4 class="font-semibold">Handbags</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('makeup')">
+                    <div class="text-4xl mb-4">💄</div>
+                    <h4 class="font-semibold">Makeup</h4>
+                </div>
+                <div class="category-card bg-white rounded-lg shadow-md p-6 text-center cursor-pointer" onclick="filterProducts('skincare')">
+                    <div class="text-4xl mb-4">🧴</div>
+                    <h4 class="font-semibold">Skincare</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-3xl font-bold">Featured Products</h3>
+                <div class="flex space-x-2">
+                    <button onclick="filterProducts('all')" class="filter-btn bg-purple-600 text-white px-4 py-2 rounded-lg">All</button>
+                    <button onclick="filterProducts('men')" class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg">Men</button>
+                    <button onclick="filterProducts('women')" class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg">Women</button>
+                    <button onclick="filterProducts('kids')" class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg">Kids</button>
+                </div>
+            </div>
+            
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                </div>
+        </div>
+    </section>
+
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Login</h3>
+                <button onclick="hideLogin()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="login-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="login-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 font-semibold">
+                    Login
+                </button>
+            </form>
+            
+            <p class="text-center mt-4 text-gray-600">
+                Don't have an account? 
+                <button onclick="showSignup(); hideLogin();" class="text-purple-600 hover:underline">Sign up</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Sign Up</h3>
+                <button onclick="hideSignup()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="handleSignup(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                    <input type="text" id="signup-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="signup-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+                    <input type="tel" id="signup-phone" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="signup-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 font-semibold">
+                    Sign Up
+                </button>
+            </form>
+            
+            <p class="text-center mt-4 text-gray-600">
+                Already have an account? 
+                <button onclick="showLogin(); hideSignup();" class="text-purple-600 hover:underline">Login</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-96 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-6 border-b">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold">Shopping Cart</h3>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="cart-items" class="p-6 flex-1 overflow-y-auto">
+            </div>
+        
+        <div class="p-6 border-t">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg font-semibold">Total: </span>
+                <span id="cart-total" class="text-xl font-bold text-purple-600">₹0</span>
+            </div>
+            <button onclick="proceedToCheckout()" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 font-semibold">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <div id="wishlist-sidebar" class="fixed right-0 top-0 h-full w-96 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-6 border-b">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold">Wishlist</h3>
+                <button onclick="toggleWishlist()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="wishlist-items" class="p-6 flex-1 overflow-y-auto">
+            </div>
+    </div>
+
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div id="product-detail-content">
+                </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Checkout</h3>
+                <button onclick="hideCheckout()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="handleCheckout(event)">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                        <input type="text" id="checkout-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+                        <input type="tel" id="checkout-phone" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="checkout-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Delivery Address</label>
+                    <textarea id="checkout-address" required rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">City</label>
+                        <input type="text" id="checkout-city" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">State</label>
+                        <input type="text" id="checkout-state" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ZIP Code</label>
+                        <input type="text" id="checkout-zip" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                    <h4 class="font-semibold mb-2">Order Summary</h4>
+                    <div id="checkout-summary"></div>
+                    <div class="border-t pt-2 mt-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold">Total: </span>
+                            <span id="checkout-total" class="font-bold text-purple-600"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 font-semibold">
+                    Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+            <div class="text-6xl text-green-500 mb-4">✅</div>
+            <h3 class="text-2xl font-bold mb-4">Order Placed Successfully!</h3>
+            <p class="text-gray-600 mb-6">Thank you for your purchase. You will receive a confirmation email shortly.</p>
+            <button onclick="hideSuccess()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA (EXPANDED CATALOG) ---
+        const products = [
+            // Original Items
+            { id: 1, name: "Classic White Shirt", price: 1299, category: "men", image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=400&fit=crop", rating: 4.5, reviews: 128, description: "A timeless classic white shirt perfect for any occasion. Made from premium cotton blend for comfort and durability. 💫", sizes: ["S", "M", "L", "XL"], colors: ["White", "Blue", "Black"], brand: "Fabindia" },
+            { id: 2, name: "Floral Summer Dress", price: 2499, category: "women", image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=400&fit=crop", rating: 4.8, reviews: 95, description: "Beautiful floral summer dress with a flowing silhouette. Perfect for casual outings and special occasions. 🌸", sizes: ["XS", "S", "M", "L"], colors: ["Floral Pink", "Floral Blue", "Floral Yellow"], brand: "Global Desi" },
+            { id: 3, name: "Kids Rainbow T-Shirt", price: 699, category: "kids", image: "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=400&h=400&fit=crop", rating: 4.6, reviews: 67, description: "Colorful rainbow t-shirt for kids. Soft, comfortable fabric that's perfect for playtime. 🌈", sizes: ["2T", "3T", "4T", "5T"], colors: ["Rainbow", "Blue", "Pink"], brand: "Hopscotch" },
+            { id: 4, name: "Leather Handbag", price: 3999, category: "handbags", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=400&fit=crop", rating: 4.7, reviews: 203, description: "Elegant leather handbag with multiple compartments. Perfect for work or casual outings. ✨", sizes: ["One Size"], colors: ["Black", "Brown", "Tan"], brand: "Hidesign" },
+            { id: 5, name: "Running Sneakers", price: 2799, category: "footwear", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop", rating: 4.4, reviews: 156, description: "Comfortable running sneakers with excellent cushioning and support for all-day wear. 👟", sizes: ["6", "7", "8", "9", "10", "11"], colors: ["White", "Black", "Gray"], brand: "Campus" },
+            { id: 6, name: "Gold Watch", price: 8999, category: "accessories", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop", rating: 4.9, reviews: 89, description: "Elegant gold watch with precision movement. A perfect accessory for any outfit. ⌚", sizes: ["One Size"], colors: ["Gold", "Silver", "Rose Gold"], brand: "Titan" },
+            { id: 7, name: "Matte Lipstick Set", price: 1199, category: "makeup", image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop", rating: 4.6, reviews: 234, description: "Long-lasting matte lipstick set with 6 beautiful shades. Cruelty-free and vegan formula. 💄", sizes: ["One Size"], colors: ["Red Set", "Pink Set", "Nude Set"], brand: "Nykaa" },
+            { id: 8, name: "Vitamin C Serum", price: 1599, category: "skincare", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop", rating: 4.8, reviews: 312, description: "Brightening vitamin C serum that helps reduce dark spots and improve skin texture. 🧴", sizes: ["30ml", "50ml"], colors: ["Clear"], brand: "Minimalist" },
+            { id: 9, name: "Ethnic Kurta Set", price: 1899, category: "women", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop", rating: 4.7, reviews: 156, description: "Beautiful ethnic kurta set with intricate embroidery. Perfect for festivals and celebrations. 🪔", sizes: ["XS", "S", "M", "L", "XL"], colors: ["Pink", "Blue", "Yellow", "Green"], brand: "Biba" },
+            { id: 10, name: "Men's Denim Jacket", price: 3499, category: "men", image: "https://images.unsplash.com/photo-1611312449412-6cefac5dc3e4?w=400&h=400&fit=crop", rating: 4.6, reviews: 112, description: "A stylish and versatile denim jacket for men. A wardrobe essential for a cool, casual look. 😎", sizes: ["S", "M", "L", "XL"], colors: ["Blue", "Black"], brand: "Levi's" },
+            { id: 11, name: "Kids' Hooded Sweatshirt", price: 1499, category: "kids", image: "https://images.unsplash.com/photo-1610732811384-2394a5e6223a?w=400&h=400&fit=crop", rating: 4.5, reviews: 55, description: "Cozy and warm hooded sweatshirt for kids, featuring a fun graphic print. Perfect for chilly days. 🐻", sizes: ["3T", "4T", "5T", "6T"], colors: ["Gray", "Navy", "Red"], brand: "Gini & Jony" },
+            { id: 12, name: "Silver Jhumkas", price: 999, category: "accessories", image: "https://images.unsplash.com/photo-1616199298264-b6dce39c41a4?w=400&h=400&fit=crop", rating: 4.9, reviews: 180, description: "Traditional silver-plated jhumka earrings with intricate detailing. Adds a touch of ethnic elegance. ✨", sizes: ["One Size"], colors: ["Silver"], brand: "Tanishq" },
+            
+            // --- NEW ITEMS START HERE ---
+
+            // Men's Fashion
+            { id: 13, name: "Men's Polo T-Shirt", price: 1499, category: "men", image: "https://images.unsplash.com/photo-1576995853123-5a1d3b4d4b15?w=400&h=400&fit=crop", rating: 4.7, reviews: 210, description: "Classic polo t-shirt made from breathable pique cotton. Perfect for a smart casual look. 🏌️", sizes: ["S", "M", "L", "XL", "XXL"], colors: ["Navy", "White", "Maroon"], brand: "U.S. Polo Assn." },
+            { id: 14, name: "Slim-Fit Chinos", price: 2299, category: "men", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&h=400&fit=crop", rating: 4.6, reviews: 150, description: "Versatile slim-fit chinos that can be dressed up or down. A modern wardrobe staple. 👖", sizes: ["30", "32", "34", "36"], colors: ["Khaki", "Olive", "Grey"], brand: "Allen Solly" },
+            { id: 15, name: "Traditional Nehru Jacket", price: 3999, category: "men", image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=400&h=400&fit=crop", rating: 4.8, reviews: 90, description: "Elegant sleeveless Nehru jacket for a sophisticated ethnic look. Wear it over a kurta. 👑", sizes: ["M", "L", "XL"], colors: ["Beige", "Black", "Blue"], brand: "Manyavar" },
+            { id: 16, name: "Men's Leather Loafers", price: 3199, category: "footwear", image: "https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=400&h=400&fit=crop", rating: 4.5, reviews: 115, description: "Stylish leather loafers for a refined finish to your outfit. Comfort and class combined. 👞", sizes: ["7", "8", "9", "10"], colors: ["Tan", "Black"], brand: "Bata" },
+            { id: 17, name: "Men's Graphic Hoodie", price: 2899, category: "men", image: "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=400&h=400&fit=crop", rating: 4.4, reviews: 85, description: "Comfortable fleece hoodie with a cool graphic print. Perfect for a laid-back style. 🎨", sizes: ["S", "M", "L", "XL"], colors: ["Black", "Grey", "White"], brand: "Puma" },
+
+            // Women's Fashion
+            { id: 18, name: "Designer Silk Saree", price: 7999, category: "women", image: "https://images.unsplash.com/photo-1621072134458-e22ab4628373?w=400&h=400&fit=crop", rating: 4.9, reviews: 120, description: "Exquisite Banarasi silk saree with intricate zari work. The epitome of grace and tradition. 💖", sizes: ["One Size"], colors: ["Royal Blue", "Maroon", "Emerald Green"], brand: "Sabyasachi" },
+            { id: 19, name: "High-Waist Skinny Jeans", price: 2899, category: "women", image: "https://images.unsplash.com/photo-1604176354204-926873782855?w=400&h=400&fit=crop", rating: 4.6, reviews: 190, description: "Flattering high-waist skinny jeans with a comfortable stretch. Your new favorite pair! 👖", sizes: ["26", "28", "30", "32"], colors: ["Dark Blue", "Black", "Light Blue"], brand: "Vero Moda" },
+            { id: 20, name: "Elegant Anarkali Gown", price: 4599, category: "women", image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=400&h=400&fit=crop", rating: 4.8, reviews: 110, description: "A stunning floor-length Anarkali gown, perfect for weddings and festive occasions. ✨", sizes: ["S", "M", "L"], colors: ["Peach", "Mint Green", "Lavender"], brand: "W for Woman" },
+            { id: 21, name: "Women's White Sneakers", price: 2599, category: "footwear", image: "https://images.unsplash.com/photo-1595950653106-6090ee0362b9?w=400&h=400&fit=crop", rating: 4.7, reviews: 250, description: "Classic white sneakers that go with everything from dresses to jeans. A must-have! 👟", sizes: ["5", "6", "7", "8"], colors: ["White"], brand: "Adidas" },
+            { id: 22, name: "Chic Jumpsuit", price: 3299, category: "women", image: "https://images.unsplash.com/photo-1595507109213-9309a4753c15?w=400&h=400&fit=crop", rating: 4.5, reviews: 95, description: "A stylish and comfortable jumpsuit for a modern, effortless look. Day to night fashion. 🌟", sizes: ["XS", "S", "M", "L"], colors: ["Black", "Olive", "Red"], brand: "Zara" },
+            { id: 23, name: "Sequin Party Dress", price: 4999, category: "women", image: "https://images.unsplash.com/photo-1583722026338-22084c8a555c?w=400&h=400&fit=crop", rating: 4.9, reviews: 75, description: "Dazzle at any party with this stunning sequin dress. Guaranteed to turn heads. 💃", sizes: ["S", "M", "L"], colors: ["Gold", "Silver", "Black"], brand: "H&M" },
+            { id: 24, name: "Tote Handbag", price: 2999, category: "handbags", image: "https://images.unsplash.com/photo-1590737039546-05c303135b91?w=400&h=400&fit=crop", rating: 4.7, reviews: 180, description: "Spacious and stylish tote bag to carry all your essentials. Perfect for daily use. 👜", sizes: ["One Size"], colors: ["Tan", "Black", "Beige"], brand: "Caprese" },
+
+            // Kids' Fashion
+            { id: 25, name: "Girls' Party Frock", price: 1999, category: "kids", image: "https://images.unsplash.com/photo-1596286749914-5d518d6f5f3e?w=400&h=400&fit=crop", rating: 4.8, reviews: 88, description: "A beautiful net frock for little princesses. Perfect for birthdays and special events. 👑", sizes: ["2-3Y", "4-5Y", "6-7Y"], colors: ["Pink", "Sky Blue", "White"], brand: "FirstCry" },
+            { id: 26, name: "Boys' Kurta Pajama Set", price: 1599, category: "kids", image: "https://images.unsplash.com/photo-1620799140414-44a7f0535384?w=400&h=400&fit=crop", rating: 4.7, reviews: 70, description: "Cute and comfortable cotton kurta pajama set for boys. Ideal for ethnic occasions. 👦", sizes: ["3-4Y", "5-6Y", "7-8Y"], colors: ["Yellow", "Blue", "Orange"], brand: "Fabindia Kids" },
+            { id: 27, name: "Unisex Denim Dungaree", price: 1799, category: "kids", image: "https://images.unsplash.com/photo-1622327583921-a3f16954277d?w=400&h=400&fit=crop", rating: 4.6, reviews: 95, description: "Adorable denim dungaree for kids. Playful, durable, and always in style. 🤸", sizes: ["1-2Y", "2-3Y", "3-4Y"], colors: ["Blue Denim"], brand: "Mothercare" },
+            { id: 28, name: "Kids' Sports Shoes", price: 1299, category: "footwear", image: "https://images.unsplash.com/photo-1562183241-b937e95585b6?w=400&h=400&fit=crop", rating: 4.5, reviews: 110, description: "Lightweight and comfortable sports shoes for active kids. Great for playtime. 🏃", sizes: ["C7", "C8", "C9", "C10"], colors: ["Blue/Green", "Pink/Purple"], brand: "Skechers" },
+            { id: 29, name: "Baby Romper Set", price: 999, category: "kids", image: "https://images.unsplash.com/photo-1566048216172-29215c70e205?w=400&h=400&fit=crop", rating: 4.8, reviews: 130, description: "Pack of 3 soft cotton rompers for babies. Gentle on the skin and super cute. 👶", sizes: ["0-3M", "3-6M", "6-9M"], colors: ["Assorted Prints"], brand: "Carter's" },
+
+            // Makeup
+            { id: 30, name: "Liquid Foundation", price: 1250, category: "makeup", image: "https://images.unsplash.com/photo-1620464003293-817a023c9135?w=400&h=400&fit=crop", rating: 4.7, reviews: 350, description: "A long-wear, full-coverage liquid foundation for a flawless finish. Available in 20 shades. 🎨", sizes: ["30ml"], colors: ["Ivory", "Beige", "Tan"], brand: "L'Oréal" },
+            { id: 31, name: "Waterproof Mascara", price: 799, category: "makeup", image: "https://images.unsplash.com/photo-1512207128-52ded8f417a8?w=400&h=400&fit=crop", rating: 4.6, reviews: 410, description: "Volumizing and lengthening waterproof mascara for dramatic lashes that last all day. 👁️", sizes: ["10ml"], colors: ["Black"], brand: "Maybelline" },
+            { id: 32, name: "Eyeshadow Palette", price: 1999, category: "makeup", image: "https://images.unsplash.com/photo-1583244243453-6a0c5c6b9edc?w=400&h=400&fit=crop", rating: 4.8, reviews: 280, description: "A versatile eyeshadow palette with 12 shades in matte and shimmer finishes. Create endless looks. ✨", sizes: ["15g"], colors: ["Nude Tones", "Sunset Hues"], brand: "Huda Beauty" },
+            { id: 33, name: "Creamy Matte Lipstick", price: 899, category: "makeup", image: "https://images.unsplash.com/photo-1599855129625-2d529124ed39?w=400&h=400&fit=crop", rating: 4.7, reviews: 520, description: "Intensely pigmented creamy matte lipstick that's comfortable to wear. 💋", sizes: ["4.2g"], colors: ["Ruby Red", "Dusty Rose", "Caramel Nude"], brand: "M.A.C" },
+            { id: 34, name: "Liquid Eyeliner Pen", price: 650, category: "makeup", image: "https://images.unsplash.com/photo-1615403913916-37c2255787b4?w=400&h=400&fit=crop", rating: 4.5, reviews: 390, description: "A precision liquid eyeliner pen for the perfect winged look. Smudge-proof and long-lasting. 🖋️", sizes: ["1ml"], colors: ["Jet Black"], brand: "Lakmé" },
+            { id: 35, name: "Blush and Highlighter Duo", price: 1100, category: "makeup", image: "https://images.unsplash.com/photo-1515688594390-b649fe5828b1?w=400&h=400&fit=crop", rating: 4.6, reviews: 180, description: "A compact duo with a silky blush and a radiant highlighter for a healthy glow. 😊", sizes: ["10g"], colors: ["Peach Glow", "Rose Gold"], brand: "Sugar Cosmetics" },
+
+            // Skincare
+            { id: 36, name: "Gentle Face Cleanser", price: 499, category: "skincare", image: "https://images.unsplash.com/photo-1556912173-3c72b258525b?w=400&h=400&fit=crop", rating: 4.8, reviews: 600, description: "A soap-free, gentle face cleanser for all skin types. Removes dirt without drying the skin. 💧", sizes: ["100ml", "200ml"], colors: ["Clear"], brand: "Cetaphil" },
+            { id: 37, name: "Hyaluronic Acid Serum", price: 999, category: "skincare", image: "https://images.unsplash.com/photo-1631744539281-2f7e0279a3a9?w=400&h=400&fit=crop", rating: 4.9, reviews: 450, description: "Intensely hydrating hyaluronic acid serum for plump, dewy skin. A moisture magnet. ✨", sizes: ["30ml"], colors: ["Clear"], brand: "The Ordinary" },
+            { id: 38, name: "Daily Moisturizing Cream", price: 750, category: "skincare", image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&h=400&fit=crop", rating: 4.7, reviews: 550, description: "A lightweight, non-greasy daily moisturizer for soft and supple skin. Locks in hydration. 🌿", sizes: ["50g", "100g"], colors: ["White"], brand: "Nivea" },
+            { id: 39, name: "Broad Spectrum Sunscreen SPF 50", price: 599, category: "skincare", image: "https://images.unsplash.com/photo-1560942484-9156de162124?w=400&h=400&fit=crop", rating: 4.8, reviews: 720, description: "Protects against UVA and UVB rays. No white cast, matte finish. Your daily sun shield. ☀️", sizes: ["50ml"], colors: ["White"], brand: "Neutrogena" },
+            { id: 40, name: "Clay Face Mask", price: 699, category: "skincare", image: "https://images.unsplash.com/photo-1629198699477-837011b03332?w=400&h=400&fit=crop", rating: 4.6, reviews: 320, description: "A detoxifying clay mask to unclog pores and remove impurities for clearer skin. 🧖‍♀️", sizes: ["100g"], colors: ["Green Clay", "Charcoal"], brand: "Mamaearth" },
+            { id: 41, name: "Hydrating Rose Water Toner", price: 350, category: "skincare", image: "https://images.unsplash.com/photo-1604595535568-b7d956c34f59?w=400&h=400&fit=crop", rating: 4.7, reviews: 480, description: "Soothes and refreshes skin with pure rose water. Preps skin for serums and moisturizers. 🌹", sizes: ["100ml"], colors: ["Pink"], brand: "Kama Ayurveda" },
+            { id: 42, name: "Niacinamide Serum", price: 549, category: "skincare", image: "https://images.unsplash.com/photo-1600373801962-e6d7a4659e95?w=400&h=400&fit=crop", rating: 4.8, reviews: 800, description: "A powerful serum to reduce acne marks and control sebum production. For clear, even-toned skin. ✨", sizes: ["30ml"], colors: ["Clear"], brand: "Minimalist" },
+
+            // More items to reach 50+ new
+            { id: 43, name: "Men's Formal Blazer", price: 5999, category: "men", image: "https://images.unsplash.com/photo-1593030339908-0a705a788337?w=400&h=400&fit=crop", rating: 4.8, reviews: 105, description: "A sharp, well-fitted formal blazer for important meetings and events. Look your best. 💼", sizes: ["38", "40", "42", "44"], colors: ["Navy", "Black", "Grey"], brand: "Raymond" },
+            { id: 44, name: "Women's Palazzo Pants", price: 1499, category: "women", image: "https://images.unsplash.com/photo-1598422675973-104997125e98?w=400&h=400&fit=crop", rating: 4.5, reviews: 135, description: "Comfortable and stylish wide-leg palazzo pants. Pair with kurtis or tops. 💃", sizes: ["S", "M", "L", "XL"], colors: ["White", "Black", "Beige"], brand: "Go Colors" },
+            { id: 45, name: "Boys' Dinosaur Print Shirt", price: 899, category: "kids", image: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&h=400&fit=crop", rating: 4.7, reviews: 92, description: "A fun and quirky dinosaur print shirt for boys. Made from soft, breathable cotton. 🦕", sizes: ["4-5Y", "6-7Y", "8-9Y"], colors: ["Blue", "White"], brand: "Allen Solly Junior" },
+            { id: 46, name: "Concealer with Applicator", price: 599, category: "makeup", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop", rating: 4.6, reviews: 310, description: "A high-coverage liquid concealer to hide blemishes and dark circles. Blends seamlessly. ✨", sizes: ["6ml"], colors: ["Light", "Medium", "Deep"], brand: "Maybelline" },
+            { id: 47, name: "Retinol Night Cream", price: 975, category: "skincare", image: "https://images.unsplash.com/photo-1629198699477-837011b03332?w=400&h=400&fit=crop", rating: 4.7, reviews: 420, description: "An anti-aging night cream with retinol to reduce fine lines and wrinkles while you sleep. 🌙", sizes: ["50g"], colors: ["White"], brand: "Olay" },
+            { id: 48, name: "Men's Cargo Shorts", price: 1799, category: "men", image: "https://images.unsplash.com/photo-1591365123699-0b06b723508f?w=400&h=400&fit=crop", rating: 4.4, reviews: 98, description: "Durable and practical cargo shorts with multiple pockets. Perfect for adventures. 🏕️", sizes: ["30", "32", "34", "36"], colors: ["Olive Green", "Beige"], brand: "Woodland" },
+            { id: 49, name: "Lehenga Choli Set", price: 12999, category: "women", image: "https://images.unsplash.com/photo-1598048862908-7248385b2b2b?w=400&h=400&fit=crop", rating: 4.9, reviews: 85, description: "A heavily embroidered lehenga choli set for a stunning bridal or festive look. 🎊", sizes: ["Semi-stitched"], colors: ["Red", "Pastel Pink"], brand: "Mohey" },
+            { id: 50, name: "Girls' Unicorn Leggings", price: 599, category: "kids", image: "https://images.unsplash.com/photo-1575517111568-62804b78a83a?w=400&h=400&fit=crop", rating: 4.8, reviews: 115, description: "Stretchy and comfortable leggings with a magical unicorn print. 🦄", sizes: ["3-4Y", "5-6Y", "7-8Y"], colors: ["Pink", "Purple"], brand: "Max Fashion" },
+            { id: 51, name: "Setting Spray", price: 850, category: "makeup", image: "https://images.unsplash.com/photo-1590153592147-03d3b4a2d7b1?w=400&h=400&fit=crop", rating: 4.6, reviews: 250, description: "A makeup setting spray that locks in your look for hours with a matte finish. ✨", sizes: ["50ml"], colors: ["Translucent"], brand: "PAC" },
+            { id: 52, name: "Under Eye Cream", price: 499, category: "skincare", image: "https://images.unsplash.com/photo-1600836798134-08d48858d20e?w=400&h=400&fit=crop", rating: 4.5, reviews: 330, description: "Reduces dark circles and puffiness with a cooling and hydrating formula. 👀", sizes: ["15g"], colors: ["White"], brand: "Himalaya" },
+            { id: 53, name: "Men's Sports Tracksuit", price: 4299, category: "men", image: "https://images.unsplash.com/photo-1551028157-1b4d0b2a4a23?w=400&h=400&fit=crop", rating: 4.6, reviews: 125, description: "A comfortable and stylish tracksuit for workouts or lounging. Made with quick-dry fabric. 🏃‍♂️", sizes: ["M", "L", "XL"], colors: ["Black/White", "Blue/Grey"], brand: "Nike" },
+            { id: 54, name: "Women's Kaftan Dress", price: 2199, category: "women", image: "https://images.unsplash.com/photo-1621295399516-33924a6850c9?w=400&h=400&fit=crop", rating: 4.7, reviews: 99, description: "A breezy and elegant kaftan dress. Perfect for vacations and resort wear. 🌴", sizes: ["Free Size"], colors: ["Blue Print", "Yellow Floral"], brand: "The Loom" },
+            { id: 55, name: "Baby Booties", price: 499, category: "kids", image: "https://images.unsplash.com/photo-1582147987975-32a2333c1097?w=400&h=400&fit=crop", rating: 4.8, reviews: 150, description: "Soft and warm booties to keep your baby's feet cozy. Adorable and practical. 👣", sizes: ["0-6M", "6-12M"], colors: ["Blue", "Pink", "Grey"], brand: "Chicco" },
+            { id: 56, name: "Nail Polish Set", price: 799, category: "makeup", image: "https://images.unsplash.com/photo-1604135182852-60193b2a2491?w=400&h=400&fit=crop", rating: 4.5, reviews: 180, description: "A set of 5 trendy, chip-resistant nail polishes. High shine and quick-drying. 💅", sizes: ["5ml each"], colors: ["Pastel Dreams", "Bold Brights"], brand: "Kay Beauty" },
+            { id: 57, name: "Charcoal Face Wash", price: 349, category: "skincare", image: "https://images.unsplash.com/photo-1629198699477-837011b03332?w=400&h=400&fit=crop", rating: 4.6, reviews: 400, description: "Deeply cleanses and removes pollution and impurities with activated charcoal. 🧼", sizes: ["100ml"], colors: ["Black"], brand: "The Man Company" },
+            { id: 58, name: "Men's Aviator Sunglasses", price: 1899, category: "accessories", image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=400&fit=crop", rating: 4.7, reviews: 220, description: "Classic aviator sunglasses with UV protection. Timeless style and essential protection. 😎", sizes: ["One Size"], colors: ["Gold/Green", "Black/Grey"], brand: "Lenskart" },
+            { id: 59, name: "Women's Boyfriend Blazer", price: 3599, category: "women", image: "https://images.unsplash.com/photo-1585487002193-3b421a22472b?w=400&h=400&fit=crop", rating: 4.6, reviews: 110, description: "A relaxed-fit boyfriend blazer for a chic, oversized look. Power dressing made easy. 💼", sizes: ["S", "M", "L"], colors: ["Beige", "Black", "Pink"], brand: "Mango" },
+            { id: 60, name: "Kids' Pajama Set", price: 999, category: "kids", image: "https://images.unsplash.com/photo-1578603638428-f685fa59a49c?w=400&h=400&fit=crop", rating: 4.8, reviews: 140, description: "A cozy and soft pajama set with cute prints for a good night's sleep. 😴", sizes: ["2-3Y", "4-5Y", "6-7Y"], colors: ["Starry Night", "Dino Park"], brand: "Nite Flite" },
+            { id: 61, name: "Micellar Water", price: 450, category: "skincare", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop", rating: 4.9, reviews: 950, description: "Gently removes makeup, dirt, and impurities in one step without rinsing. A skincare staple. 💧", sizes: ["125ml", "400ml"], colors: ["Clear"], brand: "Garnier" },
+            { id: 62, name: "Lip Balm with SPF", price: 299, category: "makeup", image: "https://images.unsplash.com/photo-1599855129625-2d529124ed39?w=400&h=400&fit=crop", rating: 4.7, reviews: 600, description: "Hydrates and protects lips from the sun. Keeps lips soft and chap-free. ☀️", sizes: ["4.5g"], colors: ["Tinted Pink", "Natural"], brand: "Biotique" }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // --- DOM ELEMENTS ---
+        const productsGrid = document.getElementById('products-grid');
+        const cartCountEl = document.getElementById('cart-count');
+        const wishlistCountEl = document.getElementById('wishlist-count');
+        const cartItemsEl = document.getElementById('cart-items');
+        const cartTotalEl = document.getElementById('cart-total');
+        const wishlistItemsEl = document.getElementById('wishlist-items');
+
+        // --- RENDER FUNCTIONS ---
+        function renderProducts(productArray = products) {
+            productsGrid.innerHTML = '';
+            productArray.forEach(product => {
+                const isLiked = wishlist.includes(product.id);
+                const productCard = document.createElement('div');
+                productCard.className = `product-card rounded-2xl p-6 shadow-lg relative overflow-hidden group`;
+                productCard.innerHTML = `
+                    <div class="absolute top-4 right-4 z-10">
+                        <button onclick="toggleWishlist(${product.id}, this)" class="heart-icon h-12 w-12 rounded-full flex items-center justify-center text-gray-400 ${isLiked ? 'liked' : ''}">
+                            <i class="fas fa-heart text-xl"></i>
+                        </button>
+                    </div>
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover rounded-xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                    <span class="brand-badge">${product.brand}</span>
+                    <h4 class="text-xl font-bold mt-2 text-gray-800">${product.name}</h4>
+                    <div class="flex items-center my-2">
+                        <div class="star-rating">${'★'.repeat(Math.round(product.rating))}${'☆'.repeat(5 - Math.round(product.rating))}</div>
+                        <span class="text-gray-500 text-sm ml-2">(${product.reviews} reviews)</span>
+                    </div>
+                    <p class="text-2xl font-semibold text-pink-500">₹${product.price.toLocaleString('en-IN')}</p>
+                    <div class="mt-4 flex space-x-2">
+                        <button onclick="addToCart(${product.id})" class="flex-1 cute-button text-white py-2 px-4 font-semibold">
+                            Add to Cart <i class="fas fa-shopping-cart ml-1"></i>
+                        </button>
+                        <button onclick="showProductDetail(${product.id})" class="border-2 border-purple-300 text-purple-600 py-2 px-4 rounded-full hover:bg-purple-50 transition-all font-semibold">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        function renderCart() {
+            cartItemsEl.innerHTML = '';
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty! 🛒</p>';
+            } else {
+                cart.forEach(cartItem => {
+                    const product = products.find(p => p.id === cartItem.id);
+                    cartItemsEl.innerHTML += `
+                        <div class="flex items-center justify-between mb-4">
+                            <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg">
+                            <div class="flex-1 ml-4">
+                                <h4 class="font-semibold">${product.name}</h4>
+                                <p class="text-gray-500">₹${product.price.toLocaleString('en-IN')}</p>
+                                <div class="flex items-center mt-1">
+                                    <button onclick="updateQuantity(${product.id}, -1)" class="px-2 py-1 bg-gray-200 rounded-md">-</button>
+                                    <span class="mx-2">${cartItem.quantity}</span>
+                                    <button onclick="updateQuantity(${product.id}, 1)" class="px-2 py-1 bg-gray-200 rounded-md">+</button>
+                                </div>
+                            </div>
+                            <button onclick="removeFromCart(${product.id})" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+            updateCartTotal();
+            updateCartCount();
+        }
+        
+        function renderWishlist() {
+            wishlistItemsEl.innerHTML = '';
+            if (wishlist.length === 0) {
+                wishlistItemsEl.innerHTML = '<p class="text-gray-500 text-center">Your wishlist is empty! ❤️</p>';
+            } else {
+                wishlist.forEach(productId => {
+                    const product = products.find(p => p.id === productId);
+                    wishlistItemsEl.innerHTML += `
+                        <div class="flex items-center justify-between mb-4">
+                            <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg">
+                            <div class="flex-1 ml-4">
+                                <h4 class="font-semibold">${product.name}</h4>
+                                <p class="text-gray-500">₹${product.price.toLocaleString('en-IN')}</p>
+                            </div>
+                            <div>
+                                <button onclick="addToCart(${product.id}); removeFromWishlist(${product.id});" class="text-purple-500 hover:text-purple-700 mr-4"><i class="fas fa-cart-plus"></i></button>
+                                <button onclick="removeFromWishlist(${product.id})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            updateWishlistCount();
+        }
+        
+        // --- UPDATE FUNCTIONS ---
+        function updateCartTotal() {
+            const total = cart.reduce((sum, item) => {
+                const product = products.find(p => p.id === item.id);
+                return sum + product.price * item.quantity;
+            }, 0);
+            cartTotalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountEl.textContent = count;
+        }
+        
+        function updateWishlistCount() {
+            wishlistCountEl.textContent = wishlist.length;
+        }
+        
+        function saveState() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+        
+        // --- CART LOGIC ---
+        function addToCart(productId) {
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ id: productId, quantity: 1 });
+            }
+            saveState();
+            renderCart();
+        }
+        
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveState();
+            renderCart();
+        }
+        
+        function updateQuantity(productId, change) {
+            const cartItem = cart.find(item => item.id === productId);
+            if (cartItem) {
+                cartItem.quantity += change;
+                if (cartItem.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveState();
+                    renderCart();
+                }
+            }
+        }
+
+        // --- WISHLIST LOGIC ---
+        function toggleWishlist(productId, heartIcon) {
+            const index = wishlist.indexOf(productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                heartIcon.classList.remove('liked');
+            } else {
+                wishlist.push(productId);
+                heartIcon.classList.add('liked');
+            }
+            saveState();
+            renderWishlist();
+        }
+        
+        function removeFromWishlist(productId) {
+            wishlist = wishlist.filter(id => id !== productId);
+            saveState();
+            renderWishlist();
+            renderProducts();
+        }
+        
+        // --- UI & MODAL LOGIC ---
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const wishlistSidebar = document.getElementById('wishlist-sidebar');
+        const productModal = document.getElementById('product-modal');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const successModal = document.getElementById('success-modal');
+
+        function showLogin() { loginModal.classList.remove('hidden'); loginModal.classList.add('flex'); }
+        function hideLogin() { loginModal.classList.add('hidden'); loginModal.classList.remove('flex'); }
+        function showSignup() { signupModal.classList.remove('hidden'); signupModal.classList.add('flex'); }
+        function hideSignup() { signupModal.classList.add('hidden'); signupModal.classList.remove('flex'); }
+        function hideWelcome() { welcomeScreen.style.display = 'none'; }
+        function toggleCart() { cartSidebar.classList.toggle('translate-x-full'); }
+        function toggleWishlist() { wishlistSidebar.classList.toggle('translate-x-full'); }
+        function showProductDetailModal() { productModal.classList.remove('hidden'); productModal.classList.add('flex'); }
+        function hideProductDetailModal() { productModal.classList.add('hidden'); productModal.classList.remove('flex'); }
+        function showCheckout() { checkoutModal.classList.remove('hidden'); checkoutModal.classList.add('flex'); }
+        function hideCheckout() { checkoutModal.classList.add('hidden'); checkoutModal.classList.remove('flex'); }
+        function showSuccess() { successModal.classList.remove('hidden'); successModal.classList.add('flex'); }
+        function hideSuccess() { successModal.classList.add('hidden'); successModal.classList.remove('flex'); }
+        
+        function showProductDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            const productDetailContent = document.getElementById('product-detail-content');
+            productDetailContent.innerHTML = `
+                <div class="p-8 relative">
+                    <button onclick="hideProductDetailModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"><i class="fas fa-times text-2xl"></i></button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-auto object-cover rounded-2xl shadow-lg">
+                        </div>
+                        <div>
+                            <span class="brand-badge">${product.brand}</span>
+                            <h2 class="text-3xl font-bold mt-2 mb-4">${product.name}</h2>
+                            <div class="flex items-center mb-4">
+                                <div class="star-rating text-2xl">${'★'.repeat(Math.round(product.rating))}${'☆'.repeat(5 - Math.round(product.rating))}</div>
+                                <span class="text-gray-500 text-md ml-3">(${product.reviews} reviews)</span>
+                            </div>
+                            <p class="text-gray-600 mb-6 text-lg">${product.description}</p>
+                            <div class="mb-6">
+                                <h4 class="font-semibold mb-2">Sizes:</h4>
+                                <div class="flex space-x-2">${product.sizes.map(size => `<span class="border rounded-md px-3 py-1">${size}</span>`).join('')}</div>
+                            </div>
+                            <div class="mb-6">
+                                <h4 class="font-semibold mb-2">Colors:</h4>
+                                <div class="flex space-x-2">${product.colors.map(color => `<span class="border rounded-md px-3 py-1">${color}</span>`).join('')}</div>
+                            </div>
+                            <p class="text-4xl font-bold text-pink-500 mb-6">₹${product.price.toLocaleString('en-IN')}</p>
+                            <button onclick="addToCart(${product.id})" class="w-full cute-button text-white py-3 px-6 font-semibold text-lg">
+                                Add to Cart <i class="fas fa-shopping-cart ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showProductDetailModal();
+        }
+        
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            toggleCart();
+            const summaryEl = document.getElementById('checkout-summary');
+            const totalEl = document.getElementById('checkout-total');
+            summaryEl.innerHTML = cart.map(item => {
+                const product = products.find(p => p.id === item.id);
+                return `<div class="flex justify-between text-sm mb-1"><span>${product.name} (x${item.quantity})</span><span>₹${(product.price * item.quantity).toLocaleString('en-IN')}</span></div>`;
+            }).join('');
+            totalEl.textContent = cartTotalEl.textContent;
+            showCheckout();
+        }
+        
+        // --- FILTERING LOGIC ---
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        function filterProducts(category) {
+            filterBtns.forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            document.querySelector(`.filter-btn[onclick="filterProducts('${category}')"]`).classList.add('bg-purple-600', 'text-white');
+            
+            if (category === 'all') {
+                renderProducts(products);
+            } else {
+                const filteredProducts = products.filter(p => p.category === category);
+                renderProducts(filteredProducts);
+            }
+        }
+        
+        // --- AUTHENTICATION ---
+        function updateUIForUser() {
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            if (currentUser) {
+                authButtons.style.display = 'none';
+                userMenu.style.display = 'block';
+            } else {
+                authButtons.style.display = 'flex';
+                userMenu.style.display = 'none';
+            }
+        }
+        
+        function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            if (users.find(user => user.email === email)) {
+                alert("User with this email already exists!");
+                return;
+            }
+            
+            const newUser = { name, email, password };
+            users.push(newUser);
+            currentUser = newUser;
+            saveState();
+            updateUIForUser();
+            hideSignup();
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                saveState();
+                updateUIForUser();
+                hideLogin();
+            } else {
+                alert("Invalid email or password!");
+            }
+        }
+        
+        function logout() {
+            currentUser = null;
+            saveState();
+            updateUIForUser();
+        }
+        
+        function handleCheckout(event) {
+            event.preventDefault();
+            cart = [];
+            saveState();
+            renderCart();
+            hideCheckout();
+            showSuccess();
+        }
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            renderCart();
+            renderWishlist();
+            updateUIForUser();
+            
+            if (currentUser || localStorage.getItem('visitedBefore')) {
+                hideWelcome(); 
+            } else {
+                localStorage.setItem('visitedBefore', 'true');
+            }
+        });
+    </script>
+</body>
+</html>
